@@ -218,22 +218,27 @@ Card 216: 18 71  4 89 17 31 63 28 25 20 | 67 97  6 76  3 95 30 75 99 26 27 32 21
 Card 217: 54 65 75 13 46  8 37 25 95 82 | 57 14 83 33 69 47 68 64  4 21 17 92  2 48 30 70 62 50 36  7 72 66 41 85 97
 Card 218: 68 97 66 41 88 16 65 31 23 63 | 29 67 55 64 91  4 12 83  1 40 74 94 58 81 98 82 78 70 26 34 96 14 36 50 56
 `;
-const points = [];
+const cleanedInput = input.trim().replace(/Card.*:/gm, "");
+const cards = cleanedInput.split("\n");
 
-input
-    .trim()
-    .replace(/Card.*:/gm, "")
-    .split("\n")
-    .forEach(card => {
-        const [winningNumbers, yourNumbers] = card.split("|");
+const deck = [];
+
+const play = (offset = 0, limit = cards.length) => {
+    for (let i = offset; i < limit; i++) {
+        const currentCard = cards[i];
+        const [winningNumbers, yourNumbers] = currentCard.split("|");
+
         const winningNumbersList = winningNumbers.match(/\d+/gm);
         const matchingNumbers = yourNumbers.match(/\d+/gm).filter(number => winningNumbersList.includes(number));
 
+        deck.push(currentCard);
+
         if (matchingNumbers.length) {
-            points.push(Math.pow(2, matchingNumbers.length - 1));
+            play(i + 1, i + matchingNumbers.length + 1);
         }
-    });
+    }
+};
 
-const totalPoints = points.reduce((result, item) => result + item, 0);
+play();
 
-console.log(totalPoints);
+console.log(deck.length);
