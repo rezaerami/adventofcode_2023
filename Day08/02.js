@@ -715,33 +715,73 @@ MJV = (CJN, NRJ)
 DNN = (PQX, TRS)
 JDR = (XHX, VVX)
 KGF = (HDB, VPL)
-
 `
 const parsedInput = input.trim().split("\n");
 const instruction = parsedInput[0];
-const map = new Map(
-    parsedInput.slice(1).filter(Boolean).map(line => {
-        const [key, left, right] = line.replace("=", ",")
-            .replace(/\(|\)|\s/g, "").split(",")
-        return [key, {left, right}];
-    })
-)
-const start = "A";
-const destination = "Z";
+const map = parsedInput.slice(1).filter(Boolean).map(line => (
+    line.replace("=", ",")
+        .replace(/\(|\)|\s/g, "")
+        .split(",")
+));
+
 const instructionMapper = {
     R: "right",
     L: "left",
 }
 
-const followInstructions = () => {
-    const result = [...map]
-        .filter(([key]) => key.endsWith(start))
-        .map(([current]) => {
-            let steps = 0;
-            while (!current.endsWith(destination))
-                current = map.get(current)[instructionMapper[instruction[steps++ % instruction.length]]];
-            return steps;
-        });
+class Node {
+    key;
+    left;
+    right;
+    constructor(key) {
+        this.key = key;
+        this.left = null;
+        this.right = null;
+    }
+}
+class Network {
+    nodes = {};
+    constructor(connections) {
+        this.initiateNetwork(connections);
+    }
+
+    initiateNetwork(connections) {
+        for (const connection of connections) {
+            const [key, left, right] = connection;
+
+            if (!this.nodes?.[key]) {
+                this.nodes[key] = new Node(key);
+            }
+
+            if (!this.nodes?.[left]) {
+                this.nodes[left] = new Node(left);
+            }
+
+            if (!this.nodes?.[right]) {
+                this.nodes[right] = new Node(right);
+            }
+
+            this.nodes[key].left = this.nodes[left];
+            this.nodes[key].right = this.nodes[right];
+        }
+    }
+}
+
+const followInstructions = (nodes, start, end) => {
+    let activeNode = nodes[start];
+    let result = 0;
+
+    for(let i = 0; i <= instruction.length; i++){
+        if(i === instruction.length) {
+            i = 0; //reset instruction
+        }
+
+        const leafKey = instructionMapper[instruction[i]];
+        activeNode = activeNode[leafKey];
+        result++;
+        if(activeNode.key.endsWith(end))
+            break;
+    }
     return result;
 }
 
@@ -749,5 +789,7 @@ const gcd = (a, b) => a ? gcd(b % a, a) : b;
 
 const lcm = (a, b) => a * b / gcd(a, b);
 
-const result = followInstructions().reduce(lcm);
-console.log(result)
+
+const { nodes } = new Network(map);
+const result = Object.keys(nodes).filter(key => key.endsWith("A")).map(key => followInstructions(nodes, key, "Z"));
+console.log(result.reduce(lcm))
