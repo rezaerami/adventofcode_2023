@@ -178,24 +178,18 @@ const getActualLocation = (grid, galaxy, expansionFactor = 1) => {
 }
 
 const galaxies = getGalaxies(rows);
+const expansionFactor = 2;
+const adjustedGalaxies = galaxies.map(galaxy => getActualLocation(rows, galaxy, expansionFactor-1));
 
 const pairs = [];
-for(let i = 0; i < galaxies.length; i++){
-    for(let j = i+1; j < galaxies.length; j++){
-        pairs.push([galaxies[i], galaxies[j]]);
+for(let i = 0; i < adjustedGalaxies.length; i++){
+    for(let j = i+1; j < adjustedGalaxies.length; j++){
+        pairs.push([adjustedGalaxies[i], adjustedGalaxies[j]]);
     }
 }
 
 
-const expansionFactor = 2-1;
-const distances = pairs.map(([start, end], index) => {
-    result = getShortestPath (
-            getActualLocation(rows, start, expansionFactor),
-            getActualLocation(rows, end, expansionFactor),
-        )
-    return result;
-
-})
+const distances = pairs.map(([start, end]) =>  getShortestPath (start, end))
 
 console.log(distances.reduce((result, distance) => result+distance, 0));
 
