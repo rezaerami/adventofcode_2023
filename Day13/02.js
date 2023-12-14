@@ -1358,13 +1358,9 @@ const getGrid = (grid) => grid.trim().split("\n").map(line => line.trim().split(
 const getRow = (grid, index) => grid?.[index];
 const getCol = (grid, index) => grid?.map(row => row?.[index]);
 
-const isSimilar = (from, to, throttle) => from.map((char, index) => char === to[index]).filter(item => item === false).length <= throttle
+const isReflection = (from, to, tolerance) => from.map((char, index) => char === to[index]).filter(item => item === false).length <= tolerance
 
-const isReflection = (from, to) => {
-    return from?.join("") === to?.join("")
-}
-
-const isMirror = (grid, index, get, limit, throttle = 0) => {
+const isMirror = (grid, index, get, limit, tolerance = 0) => {
     let previousIndex = index
     let nextIndex = index + 1
 
@@ -1372,7 +1368,7 @@ const isMirror = (grid, index, get, limit, throttle = 0) => {
     while (previousIndex >= 0 && nextIndex < limit) {
         const previous = get(grid, previousIndex);
         const next = get(grid, nextIndex);
-        result.push(isReflection(previous, next) || isSimilar(previous, next, throttle));
+        result.push(isReflection(previous, next, tolerance));
 
         previousIndex--;
         nextIndex++;
