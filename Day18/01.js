@@ -641,9 +641,7 @@ const getTotalCubes = (instructions) => {
     for(let i = 0; i < path.length-1; i+=2 ){
         const current = path[i];
         const next = path[i + 1];
-        if(i < path.length-1) {
-            area += ((current.y + next.y) * (current.x - next.x)) / 2;
-        }
+        area += ((current.y + next.y) * (current.x - next.x)) / 2;
     }
 
     return area + perimeter / 2 + 1
