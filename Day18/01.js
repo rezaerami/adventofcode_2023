@@ -638,12 +638,15 @@ const getTotalCubes = (instructions) => {
 
     let area = 0;
 
-    path.forEach(({x, y}, index) => {
-        area += ((y + path[(index + 1) % path.length].y) *
-                (x - path[(index + 1) % path.length].x)) /
-            2;
-    })
-    return area + perimeter / 2 + 1;
+    for(let i = 0; i < path.length-1; i+=2 ){
+        const current = path[i];
+        const next = path[i + 1];
+        if(i < path.length-1) {
+            area += ((current.y + next.y) * (current.x - next.x)) / 2;
+        }
+    }
+
+    return area + perimeter / 2 + 1
 }
 
 console.log(getTotalCubes(instructions))
