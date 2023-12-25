@@ -1322,23 +1322,6 @@ const createGraph = (edges) => {
     return {groups, getGroupsCount};
 };
 
-const countConnections = (graph, startNode, visited = new Set()) => {
-    if (!graph.has(startNode)) {
-        return 0;
-    }
-
-    visited.add(startNode);
-    let count = 1;
-
-    for (const neighbor of graph.get(startNode)) {
-        if (!visited.has(neighbor)) {
-            count += countConnections(graph, neighbor, visited);
-        }
-    }
-
-    return count;
-}
-
 const parsedInput = parseInput(input);
 const { groups, getGroupsCount } = createGraph(parsedInput);
 const groupsCount = getGroupsCount(groups)
