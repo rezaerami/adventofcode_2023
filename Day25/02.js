@@ -1254,17 +1254,15 @@ const arrayEqual = (arr1, arr2) => { // compare to arrays
 
 const createGraph = (edges) => {
     const graph = new Map();
-    let groups = new Map();
+    const groups = new Map();
 
     const addEdge = (vertex, neighbor) => {
         if (!graph.has(vertex)) {
             graph.set(vertex, new Set());
-            groups.set(vertex, randomGroup());
         }
         graph.get(vertex).add(neighbor);
         if (!graph.has(neighbor)) {
             graph.set(neighbor, new Set());
-            groups.set(neighbor, randomGroup());
         }
         graph.get(neighbor).add(vertex);
     };
